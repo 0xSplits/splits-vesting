@@ -7,3 +7,6 @@
 [submodule "lib/splits-contracts"]
 	path = lib/splits-contracts
 	url = https://github.com/0xsplits/splits-contracts
+[submodule "lib/forge-std"]
+	path = lib/forge-std
+	url = https://github.com/brockelmore/forge-std
