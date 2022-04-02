@@ -3,11 +3,12 @@
 -include .env
 
 # deps
-update		:; forge update
+update					:; forge update
 
 # Build & test
-build			:; forge build
-test			:; forge test
-trace   	:; forge test -vvv
-clean  		:; forge clean
-snapshot 	:; forge snapshot
+build						:; forge build
+test						:; forge test
+test-gasreport 	:; forge test --gas-report
+trace   				:; forge test -vvv
+clean  					:; forge clean
+snapshot 				:; forge snapshot
