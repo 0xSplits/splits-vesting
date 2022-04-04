@@ -1,0 +1,17 @@
+Compiling 2 files with 0.8.13
+Compiler run successful
+
+Running 11 tests for src/test/VestingSplit.t.sol:VestingSplitTest
+[32m[PASS][0m testCan_addToVest(uint96) (runs: 256, μ: 43760, ~: 56229)
+[32m[PASS][0m testCan_add_add_claim(uint48,uint48) (runs: 256, μ: 98983, ~: 115201)
+[32m[PASS][0m testCan_add_claim_add_claim(uint48,uint48) (runs: 256, μ: 96727, ~: 123738)
+[32m[PASS][0m testCan_add_claim_add_claim_add_claim(uint48,uint48,uint48) (runs: 256, μ: 108401, ~: 134961)
+[32m[PASS][0m testCan_add_claim_claim_claim(uint96) (runs: 256, μ: 88635, ~: 111646)
+[32m[PASS][0m testCan_claimFromVest(uint96) (runs: 256, μ: 58567, ~: 83505)
+[32m[PASS][0m testCan_createVestingSplit(address,uint256) (runs: 256, μ: 257249, ~: 257249)
+[32m[PASS][0m testCan_dep_add_dep_add(uint8,uint48,uint48) (runs: 256, μ: 61763, ~: 63331)
+[32m[PASS][0m testCan_dep_dep_add(uint8,uint48,uint48) (runs: 256, μ: 55995, ~: 58126)
+[32m[PASS][0m testCan_receiveDeposit(uint96) (runs: 256, μ: 9108, ~: 12249)
+[32m[PASS][0m testCannot_setBeneficiaryToAddressZero(uint256) (runs: 256, μ: 41051, ~: 41051)
+Test result: [32mok[0m. 11 passed; 0 failed; finished in 205.28ms
+

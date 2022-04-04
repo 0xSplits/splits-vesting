@@ -4,6 +4,7 @@ out = 'out'
 libs = ['lib']
 remappings = [
   'ds-test/=lib/ds-test/src/',
+  'forge-std/=lib/forge-std/src/',
   'solmate/=lib/solmate/src/',
   'splits-contracts/=lib/splits-contracts/contracts/',
 ]

@@ -8,7 +8,7 @@ update					:; forge update
 # Build & test
 build						:; forge build
 test						:; forge test
-test-gasreport 	:; forge test --gas-report
 trace   				:; forge test -vvv
+report 					:; forge test --gas-report
+snapshot 				:; forge test --gas-report > .gas-snapshot
 clean  					:; forge clean
-snapshot 				:; forge snapshot
