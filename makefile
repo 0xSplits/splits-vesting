@@ -2,6 +2,9 @@
 # (-include to ignore error if it does not exist)
 -include .env
 
+# formatting
+lint						:; yarn prettier:fix
+
 # deps
 update					:; forge update
 
