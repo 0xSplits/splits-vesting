@@ -4,15 +4,17 @@ pragma solidity 0.8.13;
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 
+// TODO: add events
+// TODO: update tests
 // TODO: add erc20 support
-// TODO: add tests
+// TODO: update tests
+// TODO: convert to factory/clone
+// TODO: update tests
 // TODO: rename? VestingModule?
 // TODO: leave 1s for efficiency?
 // TODO: unchecked?
-// TODO: convert to factory/clone
-// TODO: add tests
 
-contract VestingSplit {
+contract EvergreenVestingModule {
     /// -----------------------------------------------------------------------
     /// errors
     /// -----------------------------------------------------------------------
@@ -33,7 +35,7 @@ contract VestingSplit {
     /// @notice New vesting integration contract deployed
     /// @param beneficiary Address to receive funds after vesting
     /// @param vestingPeriod Period of time for funds to vest
-    event CreateVestingSplit(
+    event CreateEvergreenVestingModule(
         address indexed beneficiary,
         uint256 vestingPeriod
     );
@@ -86,7 +88,7 @@ contract VestingSplit {
             ? _vestingPeriod
             : DEFAULT_VESTING_PERIOD;
 
-        emit CreateVestingSplit(beneficiary, vestingPeriod);
+        emit CreateEvergreenVestingModule(beneficiary, vestingPeriod);
     }
 
     /// -----------------------------------------------------------------------
@@ -104,6 +106,9 @@ contract VestingSplit {
 
     // TODO: if using the leave-1 pattern, might wish to use internal variables
     // with custom views
+    // TODO: needs some kind of anti-griefing mechanism
+
+    //  TODO: rename to EvergreenVest or Stream or something & revamp for pg's needs
 
     /// @notice begins vesting on available ETH
     function addToVest() external payable {
