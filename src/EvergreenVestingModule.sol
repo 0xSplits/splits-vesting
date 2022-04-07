@@ -4,15 +4,7 @@ pragma solidity 0.8.13;
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 
-// TODO: add events
-// TODO: update tests
-// TODO: add erc20 support
-// TODO: update tests
-// TODO: convert to factory/clone
-// TODO: update tests
-// TODO: rename? VestingModule?
-// TODO: leave 1s for efficiency?
-// TODO: unchecked?
+// IGNORE
 
 contract EvergreenVestingModule {
     /// -----------------------------------------------------------------------
