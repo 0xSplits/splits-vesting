@@ -8,6 +8,13 @@ import {ClonesWithImmutableArgs} from "clones-with-immutable-args/ClonesWithImmu
 
 contract VestingModuleFactory {
     /// -----------------------------------------------------------------------
+    /// errors
+    /// -----------------------------------------------------------------------
+
+    error InvalidBeneficiary();
+    error InvalidVestingPeriod();
+
+    /// -----------------------------------------------------------------------
     /// libraries
     /// -----------------------------------------------------------------------
 
@@ -50,8 +57,8 @@ contract VestingModuleFactory {
     /// -----------------------------------------------------------------------
 
     /// @notice Creates new vesting module
-    /// @param _beneficiary Address to receive funds after vesting
-    /// @param _vestingPeriod Period of time for funds to vest
+    /// @param beneficiary Address to receive funds after vesting
+    /// @param vestingPeriod Period of time for funds to vest
     function createVestingModuleClone(
         address beneficiary,
         uint256 vestingPeriod
