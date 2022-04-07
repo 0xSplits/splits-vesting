@@ -4,14 +4,10 @@ pragma solidity 0.8.13;
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 
-// TODO: update tests
 // TODO: convert to factory/clone
 // TODO: update tests
-// TODO: leave 1s for efficiency?
-// if using the leave-1 pattern, might wish to use internal variables
-// with custom views
-// TODO: unchecked?
 
+// TODO: header
 /// @dev this contract uses address(0) in some mappings to refer to eth
 
 contract VestingModule {
