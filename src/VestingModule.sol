@@ -168,7 +168,7 @@ contract VestingModule {
                     released: 0
                 });
                 emit CreateVestingStream(
-                    vestingStreamId,
+                    vestingStreamId + i,
                     token,
                     block.timestamp,
                     pendingAmount
@@ -176,6 +176,7 @@ contract VestingModule {
             }
             // use last created id as new count
             // overflow should be impossible
+            // TODO: test gas efficiency of this vs += numTokens
             numVestingStreams = vestingStreamId + numTokens;
         }
     }
