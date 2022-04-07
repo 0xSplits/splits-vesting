@@ -92,9 +92,9 @@ contract VestingModule {
     /// @dev Used for sequential ids
     uint256 public numVestingStreams;
 
-    // TODO: add accessor methods
+    // TODO: verify this accessor is sufficient
     /// Mapping from Id to vesting stream
-    mapping(uint256 => VestingStream) internal vestingStreams;
+    mapping(uint256 => VestingStream) public vestingStreams;
     /// Mapping from token to amount vesting (includes current & previous)
     mapping(address => uint256) public vesting;
     /// Mapping from token to amount released
