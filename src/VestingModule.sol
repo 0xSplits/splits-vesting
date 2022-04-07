@@ -4,6 +4,7 @@ pragma solidity 0.8.13;
 import {Clone} from "clones-with-immutable-args/Clone.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
+import {FullMath} from "./lib/FullMath.sol";
 
 // TODO: header
 /// @dev this contract uses address(0) in some events/mappings to refer to ETH
@@ -107,6 +108,7 @@ contract VestingModule is Clone {
         emit ReceiveETH(msg.value);
     }
 
+    // TODO: worthwhile to return created ids?
     /// @notice Creates new vesting streams
     /// @notice tokens Addresses of ETH (0x0) & ERC20s to create vesting streams for
     function createVestingStreams(address[] calldata tokens)
@@ -207,16 +209,15 @@ contract VestingModule is Clone {
     /// -----------------------------------------------------------------------
 
     function vested(VestingStream memory vs) internal view returns (uint256) {
+        uint256 elapsedTime;
         unchecked {
             // underflow should be impossible
-            uint256 elapsedTime = block.timestamp - vs.vestingStart;
-            // TODO: use FullMath?
-            // TODO: do I need to be concerned about overflow here? don't think so..
-            return
-                elapsedTime >= vestingPeriod()
-                    ? vs.total
-                    : (vs.total * elapsedTime) / vestingPeriod();
+            elapsedTime = block.timestamp - vs.vestingStart;
         }
+        return
+            elapsedTime >= vestingPeriod()
+                ? vs.total
+                : FullMath.mulDiv(vs.total, elapsedTime, vestingPeriod());
     }
 
     function vestedAndUnreleased(VestingStream memory vs)
