@@ -151,8 +151,8 @@ contract VestingModule {
                 // shouldn't need to worry about re-entrancy from ERC20 view fn
                 // recognizes 0x0 as eth
                 uint256 pendingAmount = (
-                                         token != address(0)
-                                         ? ERC20(token).balanceOf(address(this))
+                    token != address(0)
+                        ? ERC20(token).balanceOf(address(this))
                         : address(this).balance
                 ) +
                     released[token] -
