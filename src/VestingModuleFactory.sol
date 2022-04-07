@@ -59,21 +59,17 @@ contract VestingModuleFactory {
     /// @notice Creates new vesting module
     /// @param beneficiary Address to receive funds after vesting
     /// @param vestingPeriod Period of time for funds to vest
-    function createVestingModuleClone(
-        address beneficiary,
-        uint256 vestingPeriod
-    ) external returns (VestingModule clone) {
-        ///
+    function createVestingModule(address beneficiary, uint256 vestingPeriod)
+        external
+        returns (VestingModule vm)
+    {
         /// checks
-        ///
         if (beneficiary == address(0)) revert InvalidBeneficiary();
         if (vestingPeriod == 0) revert InvalidVestingPeriod();
 
-        ///
         /// effects
-        ///
         bytes memory data = abi.encodePacked(beneficiary, vestingPeriod);
-        clone = VestingModule(address(implementation).clone(data));
+        vm = VestingModule(address(implementation).clone(data));
         emit CreateVestingModule(beneficiary, vestingPeriod);
     }
 }

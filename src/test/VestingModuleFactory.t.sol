@@ -12,9 +12,8 @@ import {MockBeneficiary} from "./mocks/MockBeneficiary.sol";
 contract VestingModuleTest is DSTest {
     Vm public constant VM = Vm(HEVM_ADDRESS);
 
-    VestingModule vm_impl;
     VestingModuleFactory vmf;
-    VestingModule vm_clone;
+    VestingModule vm;
 
     MockBeneficiary mb;
 
@@ -25,8 +24,7 @@ contract VestingModuleTest is DSTest {
 
     function setUp() public {
         mb = new MockBeneficiary();
-        vm_impl = new VestingModule();
-        vmf = new VestingModuleFactory(vm_impl);
+        vmf = new VestingModuleFactory(new VestingModule());
     }
 
     function testCan_createVestingModule(
@@ -39,10 +37,10 @@ contract VestingModuleTest is DSTest {
         VM.expectEmit(true, false, false, true);
         emit CreateVestingModule(beneficiary, vestingPeriod);
 
-        vm_clone = vmf.createVestingModuleClone(beneficiary, vestingPeriod);
+        vm = vmf.createVestingModule(beneficiary, vestingPeriod);
 
-        assertEq(vm_clone.beneficiary(), beneficiary);
-        assertEq(vm_clone.vestingPeriod(), vestingPeriod);
+        assertEq(vm.beneficiary(), beneficiary);
+        assertEq(vm.vestingPeriod(), vestingPeriod);
     }
 
     function testCannot_setBeneficiaryToAddressZero(uint256 vestingPeriod)
@@ -52,13 +50,13 @@ contract VestingModuleTest is DSTest {
 
         VM.expectRevert(VestingModuleFactory.InvalidBeneficiary.selector);
 
-        vm_clone = vmf.createVestingModuleClone(address(0), vestingPeriod);
+        vm = vmf.createVestingModule(address(0), vestingPeriod);
     }
 
     function testCannot_setVestingPeriodToZero(address beneficiary) public {
         VM.assume(beneficiary != address(0));
         VM.expectRevert(VestingModuleFactory.InvalidVestingPeriod.selector);
 
-        vm_clone = vmf.createVestingModuleClone(beneficiary, 0);
+        vm = vmf.createVestingModule(beneficiary, 0);
     }
 }
