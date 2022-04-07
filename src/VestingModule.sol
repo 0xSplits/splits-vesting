@@ -58,9 +58,8 @@ contract VestingModule {
     event ReleaseFromVestingStream(uint256 indexed id, uint256 amount);
 
     /// @notice Emitted after each successful ETH transfer to proxy
-    /// @param vestingStream Address of the vestingStream that received ETH
     /// @param amount Amount of ETH received
-    event ReceiveETH(address indexed vestingStream, uint256 amount);
+    event ReceiveETH(uint256 amount);
 
     /// -----------------------------------------------------------------------
     /// structs
@@ -134,7 +133,7 @@ contract VestingModule {
 
     /// @notice receive ETH
     receive() external payable {
-        emit ReceiveETH(address(this), msg.value);
+        emit ReceiveETH(msg.value);
     }
 
     /// @notice Creates new vesting streams
