@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.13;
 
-/* import {DSTest} from "ds-test/test.sol"; */
 import "ds-test/test.sol";
 import {stdError, stdStorage, stdCheats} from "forge-std/stdlib.sol";
 import {console} from "forge-std/console.sol";
@@ -44,5 +43,22 @@ contract VestingModuleTest is DSTest {
 
         assertEq(vm_clone.beneficiary(), beneficiary);
         assertEq(vm_clone.vestingPeriod(), vestingPeriod);
+    }
+
+    function testCannot_setBeneficiaryToAddressZero(uint256 vestingPeriod)
+        public
+    {
+        VM.assume(vestingPeriod != 0);
+
+        VM.expectRevert(VestingModuleFactory.InvalidBeneficiary.selector);
+
+        vm_clone = vmf.createVestingModuleClone(address(0), vestingPeriod);
+    }
+
+    function testCannot_setVestingPeriodToZero(address beneficiary) public {
+        VM.assume(beneficiary != address(0));
+        VM.expectRevert(VestingModuleFactory.InvalidVestingPeriod.selector);
+
+        vm_clone = vmf.createVestingModuleClone(beneficiary, 0);
     }
 }
