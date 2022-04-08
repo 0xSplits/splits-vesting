@@ -36,7 +36,7 @@ contract VestingModuleTest is DSTest {
 
     function setUp() public {
         mb = new MockBeneficiary();
-        vmf = new VestingModuleFactory(new VestingModule());
+        vmf = new VestingModuleFactory();
         vm = vmf.createVestingModule(address(mb), 365 days);
 
         mERC20 = new MockERC20("Test Token", "TOK", 18);

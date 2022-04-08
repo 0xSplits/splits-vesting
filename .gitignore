@@ -1,5 +1,7 @@
 .DS_store
 
+.env.local
+
 cache/
 out/
 

@@ -42,10 +42,12 @@ contract VestingModuleFactory {
     /// constructor
     /// -----------------------------------------------------------------------
 
-    // TODO: should I deploy VestingModule in the constructor?
-
-    constructor(VestingModule implementation_) {
-        implementation = implementation_;
+    // TODO: deploy VestingModule in constructor or pass as arg?
+    /* constructor(VestingModule implementation_) { */
+    /*     implementation = implementation_; */
+    /* } */
+    constructor() {
+        implementation = new VestingModule();
     }
 
     /// -----------------------------------------------------------------------

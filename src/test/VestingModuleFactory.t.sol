@@ -24,7 +24,7 @@ contract VestingModuleTest is DSTest {
 
     function setUp() public {
         mb = new MockBeneficiary();
-        vmf = new VestingModuleFactory(new VestingModule());
+        vmf = new VestingModuleFactory();
     }
 
     function testCan_createVestingModule(
