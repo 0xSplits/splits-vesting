@@ -252,7 +252,9 @@ contract VestingModuleTest is DSTest {
         ids = new uint256[](2);
         ids[0] = 0;
         ids[1] = 1;
-        vm.releaseFromVesting(ids);
+        uint256[] memory releasedFunds = vm.releaseFromVesting(ids);
+        assertEq(releasedFunds[0], deposit1);
+        assertEq(releasedFunds[1], deposit2);
 
         assertEq(getBalance(address(mb), tokens[0]), deposit);
         assertEq(vm.vesting(tokens[0]), deposit);
@@ -350,7 +352,9 @@ contract VestingModuleTest is DSTest {
         assertEq(vm.vested(0), deposit1);
         assertEq(vm.vested(1), deposit2);
 
-        vm.releaseFromVesting(ids);
+        uint256[] memory releasedFunds = vm.releaseFromVesting(ids);
+        assertEq(releasedFunds[0], deposit1);
+        assertEq(releasedFunds[1], deposit2);
 
         assertEq(getBalance(address(mb), tokens[0]), deposit1);
         assertEq(getBalance(address(mb), tokens[1]), deposit2);
@@ -378,11 +382,6 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(0), deposit1);
         assertEq(vm.vested(1), deposit2);
-    }
-
-    function testCan_handleMultipleVestingStreams(uint256 deposit) public {
-        ERC20(mERC20).safeTransfer(address(vm), deposit);
-        testCan_createVestingStream(address(mERC20), deposit);
     }
 
     /* /// ----------------------------------------------------------------------- */
@@ -471,7 +470,8 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(id), deposit / 2);
 
-        vm.releaseFromVesting(ids);
+        uint256[] memory releasedFunds = vm.releaseFromVesting(ids);
+        assertEq(releasedFunds[0], deposit / 2);
 
         assertEq(getBalance(address(mb), token), deposit / 2);
         assertEq(vm.vesting(tokens[0]), deposit);
@@ -503,7 +503,8 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(id), deposit);
 
-        vm.releaseFromVesting(ids);
+        releasedFunds = vm.releaseFromVesting(ids);
+        assertEq(releasedFunds[0], deposit - deposit / 2);
 
         assertEq(getBalance(address(mb), token), deposit);
         assertEq(vm.vesting(tokens[0]), deposit);

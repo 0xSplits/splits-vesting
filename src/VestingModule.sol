@@ -162,12 +162,18 @@ contract VestingModule is Clone {
         }
     }
 
-    // TODO: should we return amounts released?
     /// @notice Releases vested funds to the beneficiary
-    /// @notice ids Ids of vesting streams to release funds from
-    function releaseFromVesting(uint256[] calldata ids) external payable {
+    /// @param ids Ids of vesting streams to release funds from
+    /// @return releasedFunds Amounts of funds released from vesting streams {ids}
+    function releaseFromVesting(uint256[] calldata ids)
+        external
+        payable
+        returns (uint256[] memory releasedFunds)
+    {
+        uint256 numIds = ids.length;
+        releasedFunds = new uint256[](numIds);
+
         unchecked {
-            uint256 numIds = ids.length;
             // overflow should be impossible in for-loop index
             for (uint256 i = 0; i < numIds; ++i) {
                 uint256 id = ids[i];
@@ -188,6 +194,7 @@ contract VestingModule is Clone {
                 }
 
                 emit ReleaseFromVestingStream(id, transferAmount);
+                releasedFunds[i] = transferAmount;
             }
         }
     }
