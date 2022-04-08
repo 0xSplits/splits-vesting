@@ -4,8 +4,14 @@ pragma solidity 0.8.13;
 import {VestingModule} from "./VestingModule.sol";
 import {ClonesWithImmutableArgs} from "clones-with-immutable-args/ClonesWithImmutableArgs.sol";
 
-/// @dev this contract uses address(0) in some events & mappings to refer to eth
-
+///
+/// @title VestingModuleFactory
+/// @author 0xSplits <will@0xSplits.xyz>
+/// @notice  A factory contract for cheaply deploying VestingModules.
+/// @dev This factory uses our own extension of clones-with-immutable-args to avoid
+/// `DELEGATECALL` inside `receive()` to accept hard gas-capped `sends` & `transfers`
+/// for maximum backwards composability.
+///
 contract VestingModuleFactory {
     /// -----------------------------------------------------------------------
     /// errors
@@ -44,10 +50,6 @@ contract VestingModuleFactory {
     /// constructor
     /// -----------------------------------------------------------------------
 
-    // TODO: deploy VestingModule in constructor or pass as arg?
-    /* constructor(VestingModule implementation_) { */
-    /*     implementation = implementation_; */
-    /* } */
     constructor() {
         implementation = new VestingModule();
     }

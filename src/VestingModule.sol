@@ -6,9 +6,20 @@ import {ERC20} from "solmate/tokens/ERC20.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 import {FullMath} from "./lib/FullMath.sol";
 
-// TODO: header
-/// @dev this contract uses address(0) in some events/mappings to refer to ETH
-
+///
+/// @title VestingModule
+/// @author 0xSplits <will@0xSplits.xyz>
+/// @notice A maximally-composable vesting contract allowing multiple isolated
+/// streams of different tokens to reach a beneficiary over time. Streams share
+/// a vesting period but may begin or have funds released independently.
+/// @dev Funds pile up in the contract via `receive()` & simple ERC20 `transfer`
+/// until a caller creates a new vesting stream. The funds then vest linearly
+/// over {vestingPeriod} and may be withdrawn accordingly by anyone on behalf
+/// of the {beneficiary}. There is no limit on the number of simultaneous
+/// vesting streams which may be created, ongoing or withdrawn from in a single
+/// tx.
+/// This contract uses address(0) in some fns/events/mappings to refer to ETH.
+///
 contract VestingModule is Clone {
     /// -----------------------------------------------------------------------
     /// errors
@@ -63,13 +74,13 @@ contract VestingModule is Clone {
     /// -----------------------------------------------------------------------
 
     /// Address to receive funds after vesting
-    /// @dev address public immutable beneficiary;
+    /// @dev equivalent to address public immutable beneficiary;
     function beneficiary() public pure returns (address) {
         return _getArgAddress(0);
     }
 
     /// Period of time for funds to vest (defaults to 365 days)
-    /// @dev uint256 public immutable vestingPeriod;
+    /// @dev equivalent to uint256 public immutable vestingPeriod;
     function vestingPeriod() public pure returns (uint256) {
         return _getArgUint256(20);
     }
@@ -89,6 +100,7 @@ contract VestingModule is Clone {
     /// constructor
     /// -----------------------------------------------------------------------
 
+    // solhint-disable-next-line no-empty-blocks
     constructor() {}
 
     /// -----------------------------------------------------------------------
@@ -101,13 +113,14 @@ contract VestingModule is Clone {
 
     /// @notice receive ETH
     /// @dev receive with emitted event is implemented directly w/i clone
+    /// deployed by factory
     /* receive() external payable { */
     /*     emit ReceiveETH(msg.value); */
     /* } */
 
-    // TODO: worthwhile to return created ids?
     /// @notice Creates new vesting streams
-    /// @notice tokens Addresses of ETH (0x0) & ERC20s to create vesting streams for
+    /// @param tokens Addresses of ETH (0x0) & ERC20s to begin vesting
+    /// @return ids Ids of created vesting streams for {tokens}
     function createVestingStreams(address[] calldata tokens)
         external
         payable
@@ -136,7 +149,7 @@ contract VestingModule is Clone {
                 // overflow should be impossible
                 vestingStreams[vestingStreamId] = VestingStream({
                     token: token,
-                    vestingStart: block.timestamp,
+                    vestingStart: block.timestamp, // solhint-disable-line not-rely-on-time
                     total: pendingAmount,
                     released: 0
                 });
@@ -149,7 +162,7 @@ contract VestingModule is Clone {
         }
     }
 
-    // TODO: anything we should return from this? amounts released?
+    // TODO: should we return amounts released?
     /// @notice Releases vested funds to the beneficiary
     /// @notice ids Ids of vesting streams to release funds from
     function releaseFromVesting(uint256[] calldata ids) external payable {
@@ -209,6 +222,7 @@ contract VestingModule is Clone {
         uint256 elapsedTime;
         unchecked {
             // underflow should be impossible
+            // solhint-disable-next-line not-rely-on-time
             elapsedTime = block.timestamp - vs.vestingStart;
         }
         return

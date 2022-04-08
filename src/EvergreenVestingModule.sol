@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.13;
 
+///
+/// TODO: WIP - ignore
+///
+
+/* solhint-disable */
+
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {SafeTransferLib} from "solmate/utils/SafeTransferLib.sol";
 
