@@ -37,7 +37,6 @@ contract VestingModule is Clone {
         uint256 amount
     );
 
-    // TODO: do we need a token or timestamp in this event?
     /// @notice Release from vesting stream
     /// @param id Id of vesting stream
     /// @param amount Amount released from stream
@@ -79,7 +78,6 @@ contract VestingModule is Clone {
     /// @dev Used for sequential ids
     uint256 public numVestingStreams;
 
-    // TODO: verify this accessor is sufficient
     /// Mapping from Id to vesting stream
     mapping(uint256 => VestingStream) internal vestingStreams;
     /// Mapping from token to amount vesting (includes current & previous)
@@ -102,11 +100,10 @@ contract VestingModule is Clone {
     /// -----------------------------------------------------------------------
 
     /// @notice receive ETH
-    /// @dev can't use receive with clones-with-immutable-args because it
-    /// expects empty calldata while the clone always appends the immutables
-    fallback() external payable {
-        emit ReceiveETH(msg.value);
-    }
+    /// @dev receive with emitted event is implemented directly w/i clone
+    /* receive() external payable { */
+    /*     emit ReceiveETH(msg.value); */
+    /* } */
 
     // TODO: worthwhile to return created ids?
     /// @notice Creates new vesting streams
@@ -163,7 +160,7 @@ contract VestingModule is Clone {
                 uint256 id = ids[i];
                 if (id >= numVestingStreams) revert InvalidVestingStreamId(id);
                 VestingStream memory vs = vestingStreams[id];
-                uint256 transferAmount = vestedAndUnreleased(vs);
+                uint256 transferAmount = _vestedAndUnreleased(vs);
                 address token = vs.token;
                 // overflow should be impossible
                 vestingStreams[id].released += transferAmount;
@@ -196,19 +193,19 @@ contract VestingModule is Clone {
 
     function vested(uint256 id) public view returns (uint256) {
         VestingStream memory vs = vestingStreams[id];
-        return vested(vs);
+        return _vested(vs);
     }
 
     function vestedAndUnreleased(uint256 id) public view returns (uint256) {
         VestingStream memory vs = vestingStreams[id];
-        return vestedAndUnreleased(vs);
+        return _vestedAndUnreleased(vs);
     }
 
     /// -----------------------------------------------------------------------
     /// functions - private & internal
     /// -----------------------------------------------------------------------
 
-    function vested(VestingStream memory vs) internal view returns (uint256) {
+    function _vested(VestingStream memory vs) internal view returns (uint256) {
         uint256 elapsedTime;
         unchecked {
             // underflow should be impossible
@@ -220,14 +217,14 @@ contract VestingModule is Clone {
                 : FullMath.mulDiv(vs.total, elapsedTime, vestingPeriod());
     }
 
-    function vestedAndUnreleased(VestingStream memory vs)
+    function _vestedAndUnreleased(VestingStream memory vs)
         internal
         view
         returns (uint256)
     {
         unchecked {
             // underflow should be impossible
-            return vested(vs) - vs.released;
+            return _vested(vs) - vs.released;
         }
     }
 }

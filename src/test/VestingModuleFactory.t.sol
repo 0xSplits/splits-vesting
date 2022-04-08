@@ -18,6 +18,7 @@ contract VestingModuleTest is DSTest {
     MockBeneficiary mb;
 
     event CreateVestingModule(
+        address indexed vestingModule,
         address indexed beneficiary,
         uint256 vestingPeriod
     );
@@ -34,8 +35,9 @@ contract VestingModuleTest is DSTest {
         VM.assume(beneficiary != address(0));
         VM.assume(vestingPeriod != 0);
 
-        VM.expectEmit(true, false, false, true);
-        emit CreateVestingModule(beneficiary, vestingPeriod);
+        // can't predict address so don't check first indexed topic
+        VM.expectEmit(false, true, true, true);
+        emit CreateVestingModule(address(this), beneficiary, vestingPeriod);
 
         vm = vmf.createVestingModule(beneficiary, vestingPeriod);
 

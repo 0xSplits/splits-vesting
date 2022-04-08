@@ -25,9 +25,11 @@ contract VestingModuleFactory {
     /// -----------------------------------------------------------------------
 
     /// @notice New vesting integration contract deployed
+    /// @param vestingModule Address of newly created VestingModule clone
     /// @param beneficiary Address to receive funds after vesting
     /// @param vestingPeriod Period of time for funds to vest
     event CreateVestingModule(
+        address indexed vestingModule,
         address indexed beneficiary,
         uint256 vestingPeriod
     );
@@ -72,6 +74,6 @@ contract VestingModuleFactory {
         /// effects
         bytes memory data = abi.encodePacked(beneficiary, vestingPeriod);
         vm = VestingModule(address(implementation).clone(data));
-        emit CreateVestingModule(beneficiary, vestingPeriod);
+        emit CreateVestingModule(address(vm), beneficiary, vestingPeriod);
     }
 }

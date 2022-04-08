@@ -49,7 +49,7 @@ contract VestingModuleTest is DSTest {
     }
 
     function testCan_emitOnReceiveETH(uint96 deposit) public {
-        VM.expectEmit(false, false, false, true);
+        VM.expectEmit(true, true, true, true);
         emit ReceiveETH(deposit);
 
         address(vm).safeTransferETH(deposit);
@@ -76,10 +76,10 @@ contract VestingModuleTest is DSTest {
         tokens[0] = address(0);
         tokens[1] = address(mERC20);
 
-        VM.expectEmit(true, true, false, true);
+        VM.expectEmit(true, true, true, true);
         emit CreateVestingStream(0, tokens[0], depositETH);
 
-        VM.expectEmit(true, true, false, true);
+        VM.expectEmit(true, true, true, true);
         emit CreateVestingStream(1, tokens[1], depositERC20);
 
         vm.createVestingStreams(tokens);
@@ -104,13 +104,13 @@ contract VestingModuleTest is DSTest {
         uint256 id = ids[0];
 
         VM.warp(vm.vestingPeriod() / 2);
-        VM.expectEmit(true, false, false, true);
+        VM.expectEmit(true, true, true, true);
         emit ReleaseFromVestingStream(id, deposit / 2);
 
         vm.releaseFromVesting(ids);
 
         VM.warp(vm.vestingPeriod());
-        VM.expectEmit(true, false, false, true);
+        VM.expectEmit(true, true, true, true);
         emit ReleaseFromVestingStream(id, deposit - deposit / 2);
 
         vm.releaseFromVesting(ids);
