@@ -196,6 +196,8 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(0), deposit1 / 2);
         assertEq(vm.vested(1), 0);
+        assertEq(vm.vestedAndUnreleased(0), deposit1 / 2);
+        assertEq(vm.vestedAndUnreleased(1), 0);
 
         VM.warp(vm.vestingPeriod());
 
@@ -222,6 +224,8 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(0), deposit1);
         assertEq(vm.vested(1), deposit2 / 2);
+        assertEq(vm.vestedAndUnreleased(0), deposit1);
+        assertEq(vm.vestedAndUnreleased(1), deposit2 / 2);
 
         VM.warp((vm.vestingPeriod() * 3) / 2);
 
@@ -248,6 +252,8 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(0), deposit1);
         assertEq(vm.vested(1), deposit2);
+        assertEq(vm.vestedAndUnreleased(0), deposit1);
+        assertEq(vm.vestedAndUnreleased(1), deposit2);
 
         ids = new uint256[](2);
         ids[0] = 0;
@@ -279,6 +285,38 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(0), deposit1);
         assertEq(vm.vested(1), deposit2);
+        assertEq(vm.vestedAndUnreleased(0), 0);
+        assertEq(vm.vestedAndUnreleased(1), 0);
+
+        releasedFunds = vm.releaseFromVesting(ids);
+        assertEq(releasedFunds[0], 0);
+        assertEq(releasedFunds[1], 0);
+
+        assertEq(getBalance(address(mb), tokens[0]), deposit);
+        assertEq(vm.vesting(tokens[0]), deposit);
+        assertEq(vm.released(tokens[0]), deposit);
+        assertEq(
+            vm.vestingStream(0),
+            VestingModule.VestingStream({
+                token: tokens[0],
+                vestingStart: 0,
+                total: deposit1,
+                released: deposit1
+            })
+        );
+        assertEq(
+            vm.vestingStream(1),
+            VestingModule.VestingStream({
+                token: tokens[0],
+                vestingStart: vm.vestingPeriod() / 2,
+                total: deposit2,
+                released: deposit2
+            })
+        );
+        assertEq(vm.vested(0), deposit1);
+        assertEq(vm.vested(1), deposit2);
+        assertEq(vm.vestedAndUnreleased(0), 0);
+        assertEq(vm.vestedAndUnreleased(1), 0);
     }
 
     function testCan_handleTwoVestingStreamsWithDifferentTokens(
@@ -324,6 +362,8 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(0), deposit1 / 2);
         assertEq(vm.vested(1), deposit2 / 2);
+        assertEq(vm.vestedAndUnreleased(0), deposit1 / 2);
+        assertEq(vm.vestedAndUnreleased(1), deposit2 / 2);
 
         VM.warp(vm.vestingPeriod());
 
@@ -351,6 +391,8 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(0), deposit1);
         assertEq(vm.vested(1), deposit2);
+        assertEq(vm.vestedAndUnreleased(0), deposit1);
+        assertEq(vm.vestedAndUnreleased(1), deposit2);
 
         uint256[] memory releasedFunds = vm.releaseFromVesting(ids);
         assertEq(releasedFunds[0], deposit1);
@@ -382,6 +424,76 @@ contract VestingModuleTest is DSTest {
         );
         assertEq(vm.vested(0), deposit1);
         assertEq(vm.vested(1), deposit2);
+        assertEq(vm.vestedAndUnreleased(0), 0);
+        assertEq(vm.vestedAndUnreleased(1), 0);
+
+        releasedFunds = vm.releaseFromVesting(ids);
+        assertEq(releasedFunds[0], 0);
+        assertEq(releasedFunds[1], 0);
+
+        assertEq(getBalance(address(mb), tokens[0]), deposit1);
+        assertEq(getBalance(address(mb), tokens[1]), deposit2);
+        assertEq(vm.vesting(tokens[0]), deposit1);
+        assertEq(vm.vesting(tokens[1]), deposit2);
+        assertEq(vm.released(tokens[0]), deposit1);
+        assertEq(vm.released(tokens[1]), deposit2);
+        assertEq(
+            vm.vestingStream(0),
+            VestingModule.VestingStream({
+                token: tokens[0],
+                vestingStart: 0,
+                total: deposit1,
+                released: deposit1
+            })
+        );
+        assertEq(
+            vm.vestingStream(1),
+            VestingModule.VestingStream({
+                token: tokens[1],
+                vestingStart: 0,
+                total: deposit2,
+                released: deposit2
+            })
+        );
+        assertEq(vm.vested(0), deposit1);
+        assertEq(vm.vested(1), deposit2);
+        assertEq(vm.vestedAndUnreleased(0), 0);
+        assertEq(vm.vestedAndUnreleased(1), 0);
+
+        VM.warp(vm.vestingPeriod() * 2);
+
+        releasedFunds = vm.releaseFromVesting(ids);
+        assertEq(releasedFunds[0], 0);
+        assertEq(releasedFunds[1], 0);
+
+        assertEq(getBalance(address(mb), tokens[0]), deposit1);
+        assertEq(getBalance(address(mb), tokens[1]), deposit2);
+        assertEq(vm.vesting(tokens[0]), deposit1);
+        assertEq(vm.vesting(tokens[1]), deposit2);
+        assertEq(vm.released(tokens[0]), deposit1);
+        assertEq(vm.released(tokens[1]), deposit2);
+        assertEq(
+            vm.vestingStream(0),
+            VestingModule.VestingStream({
+                token: tokens[0],
+                vestingStart: 0,
+                total: deposit1,
+                released: deposit1
+            })
+        );
+        assertEq(
+            vm.vestingStream(1),
+            VestingModule.VestingStream({
+                token: tokens[1],
+                vestingStart: 0,
+                total: deposit2,
+                released: deposit2
+            })
+        );
+        assertEq(vm.vested(0), deposit1);
+        assertEq(vm.vested(1), deposit2);
+        assertEq(vm.vestedAndUnreleased(0), 0);
+        assertEq(vm.vestedAndUnreleased(1), 0);
     }
 
     /* /// ----------------------------------------------------------------------- */
@@ -469,6 +581,7 @@ contract VestingModuleTest is DSTest {
             })
         );
         assertEq(vm.vested(id), deposit / 2);
+        assertEq(vm.vestedAndUnreleased(id), deposit / 2);
 
         uint256[] memory releasedFunds = vm.releaseFromVesting(ids);
         assertEq(releasedFunds[0], deposit / 2);
@@ -486,6 +599,7 @@ contract VestingModuleTest is DSTest {
             })
         );
         assertEq(vm.vested(id), deposit / 2);
+        assertEq(vm.vestedAndUnreleased(id), 0);
 
         VM.warp(vm.vestingPeriod());
 
@@ -502,6 +616,7 @@ contract VestingModuleTest is DSTest {
             })
         );
         assertEq(vm.vested(id), deposit);
+        assertEq(vm.vestedAndUnreleased(id), deposit - deposit / 2);
 
         releasedFunds = vm.releaseFromVesting(ids);
         assertEq(releasedFunds[0], deposit - deposit / 2);
@@ -519,6 +634,44 @@ contract VestingModuleTest is DSTest {
             })
         );
         assertEq(vm.vested(id), deposit);
+        assertEq(vm.vestedAndUnreleased(id), 0);
+
+        releasedFunds = vm.releaseFromVesting(ids);
+        assertEq(releasedFunds[0], 0);
+
+        assertEq(getBalance(address(mb), token), deposit);
+        assertEq(vm.vesting(tokens[0]), deposit);
+        assertEq(vm.released(tokens[0]), deposit);
+        assertEq(
+            vm.vestingStream(id),
+            VestingModule.VestingStream({
+                token: tokens[0],
+                vestingStart: vestingStart,
+                total: deposit,
+                released: deposit
+            })
+        );
+        assertEq(vm.vested(id), deposit);
+        assertEq(vm.vestedAndUnreleased(id), 0);
+
+        VM.warp(vm.vestingPeriod() * 2);
+        releasedFunds = vm.releaseFromVesting(ids);
+        assertEq(releasedFunds[0], 0);
+
+        assertEq(getBalance(address(mb), token), deposit);
+        assertEq(vm.vesting(tokens[0]), deposit);
+        assertEq(vm.released(tokens[0]), deposit);
+        assertEq(
+            vm.vestingStream(id),
+            VestingModule.VestingStream({
+                token: tokens[0],
+                vestingStart: vestingStart,
+                total: deposit,
+                released: deposit
+            })
+        );
+        assertEq(vm.vested(id), deposit);
+        assertEq(vm.vestedAndUnreleased(id), 0);
     }
 
     function getBalance(address target, address token)
