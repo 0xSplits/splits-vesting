@@ -142,9 +142,8 @@ contract VestingModule is Clone {
                     token != address(0)
                         ? ERC20(token).balanceOf(address(this))
                         : address(this).balance
-                ) +
-                    released[token] -
-                    vesting[token];
+                    // vesting >= released
+                ) - (vesting[token] - released[token]);
                 vesting[token] += pendingAmount;
                 // overflow should be impossible
                 vestingStreams[vestingStreamId] = VestingStream({
@@ -228,7 +227,7 @@ contract VestingModule is Clone {
     function _vested(VestingStream memory vs) internal view returns (uint256) {
         uint256 elapsedTime;
         unchecked {
-            // underflow should be impossible
+            // block.timestamp >= vs.vestingStart for any existing stream
             // solhint-disable-next-line not-rely-on-time
             elapsedTime = block.timestamp - vs.vestingStart;
         }
