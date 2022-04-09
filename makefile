@@ -3,7 +3,7 @@
 -include .env.local
 
 # formatting
-lint						:; yarn lint
+lint						:; yarn lint:fix
 
 # deps
 update					:; forge update
