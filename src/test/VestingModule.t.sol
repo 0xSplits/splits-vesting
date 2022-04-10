@@ -55,6 +55,11 @@ contract VestingModuleTest is DSTest {
         address(vm).safeTransferETH(deposit);
     }
 
+    function testCan_receiveETHTransfer(uint96 deposit) public {
+        payable(address(vm)).transfer(deposit);
+        assertEq(address(vm).balance, deposit);
+    }
+
     function testCan_createETHVestingStreams(uint96 deposit) public {
         address(vm).safeTransferETH(deposit);
         testCan_createVestingStream(address(0), deposit);
