@@ -210,12 +210,12 @@ contract VestingModule is Clone {
         vs = vestingStreams[id];
     }
 
-    function vested(uint256 id) public view returns (uint256) {
+    function vested(uint256 id) external view returns (uint256) {
         VestingStream memory vs = vestingStreams[id];
         return _vested(vs);
     }
 
-    function vestedAndUnreleased(uint256 id) public view returns (uint256) {
+    function vestedAndUnreleased(uint256 id) external view returns (uint256) {
         VestingStream memory vs = vestingStreams[id];
         return _vestedAndUnreleased(vs);
     }
