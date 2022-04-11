@@ -1,0 +1,10 @@
+{
+  "filter_paths": "lib",
+  "solc_remaps": [
+    "clones-with-immutable-args/=lib/clones-with-immutable-args/src/",
+    "ds-test/=lib/ds-test/src/",
+    "forge-std/=lib/forge-std/src/",
+    "solmate/=lib/solmate/src/",
+    "splits-contracts/=lib/splits-contracts/contracts/"
+  ]
+}
