@@ -138,6 +138,8 @@ contract VestingModule is Clone {
                 // overflow should be impossible
                 // shouldn't need to worry about re-entrancy from ERC20 view fn
                 // recognizes 0x0 as ETH
+                // user chooses tokens array, pernicious ERC20 can't cause DoS
+                // slither-disable-next-line calls-loop
                 uint256 pendingAmount = (
                     token != address(0)
                         ? ERC20(token).balanceOf(address(this))

@@ -1,5 +1,6 @@
 {
   "filter_paths": "lib",
+  "detectors_to_exclude": "solc-version,timestamp,locked-ether",
   "solc_remaps": [
     "clones-with-immutable-args/=lib/clones-with-immutable-args/src/",
     "ds-test/=lib/ds-test/src/",
