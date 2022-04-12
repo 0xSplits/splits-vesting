@@ -23,4 +23,4 @@ deploy-ropsten	:; @forge create ./src/$(contract).sol:$(contract) --rpc-url http
 deploy-polygon		:; @forge create ./src/$(contract).sol:$(contract) --rpc-url https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_POLYGON_KEY} --private-key ${PRIVATE_KEY}
 deploy-mumbai		:; @forge create ./src/$(contract).sol:$(contract) --rpc-url https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_MUMBAI_KEY} --private-key ${PRIVATE_KEY}
 verify 					:; @forge verify-contract $(address) ./src/$(contract).sol:$(contract) ${ETHERSCAN_KEY} --compiler-version v0.8.13+commit.abaa5c0e --num-of-optimizations 200 --chain-id $(chain-id)
-verify-check 		:; @forge verify-check $(guid) ${ETHERSCAN_KEY}
+verify-check 		:; @forge verify-check $(guid) ${ETHERSCAN_KEY} --chain-id $(chain-id)
