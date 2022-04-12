@@ -112,8 +112,7 @@ contract VestingModule is Clone {
     /// -----------------------------------------------------------------------
 
     /// @notice receive ETH
-    /// @dev receive with emitted event is implemented directly w/i clone
-    /// deployed by factory
+    /// @dev receive with emitted event is implemented w/i clone bytecode
     /* receive() external payable { */
     /*     emit ReceiveETH(msg.value); */
     /* } */
