@@ -1,5 +1,7 @@
 {
   "scripts": {
+    "preinstall": "forge install",
+    "postinstall": "make typechain",
     "prettier": "prettier 'src/**/*.sol' --check",
     "prettier:list": "prettier 'src/**/*.sol' --list-different",
     "prettier:fix": "prettier 'src/**/*.sol' --write",
@@ -10,6 +12,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@typechain/ethers-v5": "^10.0.0",
     "chalk": "^5.0.1",
     "dotenv": "^16.0.0",
     "dotenv-cli": "^5.1.0",
@@ -19,7 +22,8 @@
     "prettier": "^2.6.1",
     "prettier-plugin-solidity": "^1.0.0-beta.19",
     "readline": "^1.3.0",
-    "solhint": "^3.3.7"
+    "solhint": "^3.3.7",
+    "typechain": "^8.0.0"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",

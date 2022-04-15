@@ -24,3 +24,6 @@ deploy-polygon		:; @forge create ./src/$(contract).sol:$(contract) --rpc-url htt
 deploy-mumbai		:; @forge create ./src/$(contract).sol:$(contract) --rpc-url https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_MUMBAI_KEY} --private-key ${PRIVATE_KEY}
 verify 					:; @forge verify-contract $(address) ./src/$(contract).sol:$(contract) ${ETHERSCAN_KEY} --compiler-version v0.8.13+commit.abaa5c0e --num-of-optimizations 200 --chain-id $(chain-id)
 verify-check 		:; @forge verify-check $(guid) ${ETHERSCAN_KEY} --chain-id $(chain-id)
+
+# types
+typechain				:; forge clean && forge build && yarn typechain --target=ethers-v5 out/VestingModule.sol/VestingModule.json out/VestingModuleFactory.sol/VestingModuleFactory.json

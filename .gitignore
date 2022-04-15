@@ -6,3 +6,5 @@ cache/
 out/
 
 node_modules/
+
+types/
