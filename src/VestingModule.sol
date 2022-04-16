@@ -203,6 +203,9 @@ contract VestingModule is Clone {
     /// functions - views
     /// -----------------------------------------------------------------------
 
+    /// @notice View vesting stream {id}
+    /// @param id Id of vesting stream to view
+    /// @return vs Vesting stream
     function vestingStream(uint256 id)
         external
         view
@@ -211,11 +214,17 @@ contract VestingModule is Clone {
         vs = vestingStreams[id];
     }
 
+    /// @notice View vested amount in vesting stream {id}
+    /// @param id Id of vesting stream to get vested amount of
+    /// @return Amount vested in vesting stream {id}
     function vested(uint256 id) external view returns (uint256) {
         VestingStream memory vs = vestingStreams[id];
         return _vested(vs);
     }
 
+    /// @notice View vested-and-unreleased amount in vesting stream {id}
+    /// @param id Id of vesting stream to get vested-and-unreleased amount of
+    /// @return Amount vested-and-unreleased in vesting stream {id}
     function vestedAndUnreleased(uint256 id) external view returns (uint256) {
         VestingStream memory vs = vestingStreams[id];
         return _vestedAndUnreleased(vs);
@@ -225,6 +234,9 @@ contract VestingModule is Clone {
     /// functions - private & internal
     /// -----------------------------------------------------------------------
 
+    /// @notice View vested amount in vesting stream {vs}
+    /// @param vs Vesting stream to get vested amount of
+    /// @return Amount vested in vesting stream {vs}
     function _vested(VestingStream memory vs) internal view returns (uint256) {
         uint256 elapsedTime;
         unchecked {
@@ -238,6 +250,9 @@ contract VestingModule is Clone {
                 : FullMath.mulDiv(vs.total, elapsedTime, vestingPeriod());
     }
 
+    /// @notice View vested-and-unreleased amount in vesting stream {vs}
+    /// @param vs Vesting stream to get vested-and-unreleased amount of
+    /// @return Amount vested-and-unreleased in vesting stream {vs}
     function _vestedAndUnreleased(VestingStream memory vs)
         internal
         view
