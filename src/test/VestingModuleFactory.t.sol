@@ -23,6 +23,10 @@ contract VestingModuleTest is Test {
         exampleVmf = new VestingModuleFactory();
     }
 
+    /// -----------------------------------------------------------------------
+    /// correctness tests
+    /// -----------------------------------------------------------------------
+
     function testCan_createVestingModule(
         address beneficiary,
         uint256 vestingPeriod

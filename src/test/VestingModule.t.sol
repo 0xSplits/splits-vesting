@@ -40,6 +40,32 @@ contract VestingModuleTest is Test {
         mERC20.mint(type(uint256).max);
     }
 
+    /// -----------------------------------------------------------------------
+    /// gas benchmarks
+    /// -----------------------------------------------------------------------
+
+    function testGas_createAndReleaseStreams() public {
+        address token = address(0);
+        address[] memory tokens = new address[](1);
+        tokens[0] = token;
+
+        // first stream of a token
+        address(exampleVm).safeTransferETH(1 ether);
+        uint256[] memory ids = exampleVm.createVestingStreams(tokens);
+        vm.warp(exampleVm.vestingPeriod());
+        uint256[] memory releasedFunds = exampleVm.releaseFromVesting(ids);
+
+        // 2-nth stream of a token
+        address(exampleVm).safeTransferETH(1 ether);
+        ids = exampleVm.createVestingStreams(tokens);
+        vm.warp(exampleVm.vestingPeriod() * 2);
+        releasedFunds = exampleVm.releaseFromVesting(ids);
+    }
+
+    /// -----------------------------------------------------------------------
+    /// correctness tests
+    /// -----------------------------------------------------------------------
+
     function testCan_predictVestingModuleAddress(
         address beneficiary,
         uint256 vestingPeriod
