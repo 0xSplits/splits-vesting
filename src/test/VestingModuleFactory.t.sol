@@ -1,19 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.13;
 
-import "ds-test/test.sol";
-import {stdError, stdStorage, stdCheats} from "forge-std/stdlib.sol";
-import {console} from "forge-std/console.sol";
-import {Vm} from "forge-std/Vm.sol";
+import {Test} from "forge-std/Test.sol";
 import {VestingModule} from "../VestingModule.sol";
 import {VestingModuleFactory} from "../VestingModuleFactory.sol";
 import {MockBeneficiary} from "./mocks/MockBeneficiary.sol";
 
-contract VestingModuleTest is DSTest {
-    Vm public constant VM = Vm(HEVM_ADDRESS);
-
-    VestingModuleFactory vmf;
-    VestingModule vm;
+contract VestingModuleTest is Test {
+    VestingModuleFactory exampleVmf;
+    VestingModule exampleVm;
 
     MockBeneficiary mb;
 
@@ -25,40 +20,40 @@ contract VestingModuleTest is DSTest {
 
     function setUp() public {
         mb = new MockBeneficiary();
-        vmf = new VestingModuleFactory();
+        exampleVmf = new VestingModuleFactory();
     }
 
     function testCan_createVestingModule(
         address beneficiary,
         uint256 vestingPeriod
     ) public {
-        VM.assume(beneficiary != address(0));
-        VM.assume(vestingPeriod != 0);
+        vm.assume(beneficiary != address(0));
+        vm.assume(vestingPeriod != 0);
 
         // can't predict address so don't check first indexed topic
-        VM.expectEmit(false, true, true, true);
+        vm.expectEmit(false, true, true, true);
         emit CreateVestingModule(address(this), beneficiary, vestingPeriod);
 
-        vm = vmf.createVestingModule(beneficiary, vestingPeriod);
+        exampleVm = exampleVmf.createVestingModule(beneficiary, vestingPeriod);
 
-        assertEq(vm.beneficiary(), beneficiary);
-        assertEq(vm.vestingPeriod(), vestingPeriod);
+        assertEq(exampleVm.beneficiary(), beneficiary);
+        assertEq(exampleVm.vestingPeriod(), vestingPeriod);
     }
 
     function testCannot_setBeneficiaryToAddressZero(uint256 vestingPeriod)
         public
     {
-        VM.assume(vestingPeriod != 0);
+        vm.assume(vestingPeriod != 0);
 
-        VM.expectRevert(VestingModuleFactory.InvalidBeneficiary.selector);
+        vm.expectRevert(VestingModuleFactory.InvalidBeneficiary.selector);
 
-        vm = vmf.createVestingModule(address(0), vestingPeriod);
+        exampleVm = exampleVmf.createVestingModule(address(0), vestingPeriod);
     }
 
     function testCannot_setVestingPeriodToZero(address beneficiary) public {
-        VM.assume(beneficiary != address(0));
-        VM.expectRevert(VestingModuleFactory.InvalidVestingPeriod.selector);
+        vm.assume(beneficiary != address(0));
+        vm.expectRevert(VestingModuleFactory.InvalidVestingPeriod.selector);
 
-        vm = vmf.createVestingModule(beneficiary, 0);
+        exampleVm = exampleVmf.createVestingModule(beneficiary, 0);
     }
 }

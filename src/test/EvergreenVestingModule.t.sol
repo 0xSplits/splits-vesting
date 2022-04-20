@@ -7,16 +7,11 @@ pragma solidity 0.8.13;
 
 /* solhint-disable */
 
-import "ds-test/test.sol";
-import {stdError, stdStorage, stdCheats} from "forge-std/stdlib.sol";
-import {console} from "forge-std/console.sol";
-import {Vm} from "forge-std/Vm.sol";
+import {Test} from "forge-std/Test.sol";
 import {EvergreenVestingModule} from "../EvergreenVestingModule.sol";
 import {MockBeneficiary} from "./mocks/MockBeneficiary.sol";
 
-contract EvergreenVestingModuleTest is DSTest {
-    Vm public constant VM = Vm(HEVM_ADDRESS);
-
+contract EvergreenVestingModuleTest is Test {
     EvergreenVestingModule evm;
     MockBeneficiary mb;
 
@@ -35,10 +30,10 @@ contract EvergreenVestingModuleTest is DSTest {
         address beneficiary,
         uint256 vestingPeriod
     ) public {
-        VM.assume(beneficiary != address(0));
+        vm.assume(beneficiary != address(0));
         vestingPeriod = vestingPeriod != 0 ? vestingPeriod : 365 days;
 
-        VM.expectEmit(true, false, false, true);
+        vm.expectEmit(true, false, false, true);
         emit CreateEvergreenVestingModule(beneficiary, vestingPeriod);
 
         evm = new EvergreenVestingModule(beneficiary, vestingPeriod);
@@ -49,7 +44,7 @@ contract EvergreenVestingModuleTest is DSTest {
     function testCannot_setBeneficiaryToAddressZero(uint256 vestingPeriod)
         public
     {
-        VM.expectRevert(EvergreenVestingModule.InvalidBeneficiary.selector);
+        vm.expectRevert(EvergreenVestingModule.InvalidBeneficiary.selector);
 
         evm = new EvergreenVestingModule(address(0), vestingPeriod);
     }
@@ -69,16 +64,16 @@ contract EvergreenVestingModuleTest is DSTest {
         assertEq(evm.toBeClaimed(), 0);
         assertEq(evm.vestedAndUnclaimed(), 0);
 
-        VM.warp(evm.vestingPeriod() / 2);
+        vm.warp(evm.vestingPeriod() / 2);
         assertEq(evm.vestedAndUnclaimed(), deposit / 2);
 
-        VM.warp(evm.vestingPeriod());
+        vm.warp(evm.vestingPeriod());
         assertEq(evm.vestedAndUnclaimed(), deposit);
     }
 
     function testCan_claimFromVest(uint96 deposit) public {
         vestDeposit(deposit);
-        VM.warp(evm.vestingPeriod());
+        vm.warp(evm.vestingPeriod());
         evm.claimFromVest();
 
         assertEq(address(mb).balance, deposit);
@@ -95,7 +90,7 @@ contract EvergreenVestingModuleTest is DSTest {
     ) public {
         uint256 deposit = uint256(deposit1) + uint256(deposit2);
         successfulDeposit(deposit1);
-        VM.warp(depositGap);
+        vm.warp(depositGap);
         successfulDeposit(deposit2);
         evm.addToVest();
 
@@ -113,9 +108,9 @@ contract EvergreenVestingModuleTest is DSTest {
     ) public {
         uint256 deposit = uint256(deposit1) + uint256(deposit2);
         vestDeposit(deposit1);
-        VM.warp(depositGap);
+        vm.warp(depositGap);
         vestDeposit(deposit2);
-        VM.warp(evm.vestingPeriod() + depositGap);
+        vm.warp(evm.vestingPeriod() + depositGap);
 
         assertEq(evm.vestingStart(), depositGap);
         assertEq(
@@ -136,9 +131,9 @@ contract EvergreenVestingModuleTest is DSTest {
     function testCan_add_add_claim(uint48 deposit1, uint48 deposit2) public {
         uint256 deposit = uint256(deposit1) + uint256(deposit2);
         vestDeposit(deposit1);
-        VM.warp(evm.vestingPeriod() / 2);
+        vm.warp(evm.vestingPeriod() / 2);
         vestDeposit(deposit2);
-        VM.warp((evm.vestingPeriod() * 3) / 2);
+        vm.warp((evm.vestingPeriod() * 3) / 2);
         evm.claimFromVest();
 
         assertEq(address(mb).balance, deposit);
@@ -156,10 +151,10 @@ contract EvergreenVestingModuleTest is DSTest {
     {
         uint256 deposit = uint256(deposit1) + uint256(deposit2);
         vestDeposit(deposit1);
-        VM.warp(evm.vestingPeriod() / 2);
+        vm.warp(evm.vestingPeriod() / 2);
         evm.claimFromVest();
         vestDeposit(deposit2);
-        VM.warp((evm.vestingPeriod() * 3) / 2);
+        vm.warp((evm.vestingPeriod() * 3) / 2);
         evm.claimFromVest();
 
         assertEq(address(mb).balance, deposit);
@@ -181,13 +176,13 @@ contract EvergreenVestingModuleTest is DSTest {
             uint256(deposit2) +
             uint256(deposit3);
         vestDeposit(deposit1);
-        VM.warp(evm.vestingPeriod() / 2);
+        vm.warp(evm.vestingPeriod() / 2);
         evm.claimFromVest();
         vestDeposit(deposit2);
-        VM.warp(evm.vestingPeriod());
+        vm.warp(evm.vestingPeriod());
         evm.claimFromVest();
         vestDeposit(deposit3);
-        VM.warp(2 * evm.vestingPeriod());
+        vm.warp(2 * evm.vestingPeriod());
         evm.claimFromVest();
 
         assertEq(address(mb).balance, deposit);
@@ -198,7 +193,7 @@ contract EvergreenVestingModuleTest is DSTest {
     function testCan_add_claim_claim_claim(uint96 deposit) public {
         vestDeposit(deposit);
 
-        VM.warp(evm.vestingPeriod() / 2);
+        vm.warp(evm.vestingPeriod() / 2);
         evm.claimFromVest();
 
         assertEq(address(mb).balance, deposit / 2);
@@ -207,7 +202,7 @@ contract EvergreenVestingModuleTest is DSTest {
         assertEq(evm.toBeClaimed(), 0);
         assertEq(evm.vestedAndUnclaimed(), 0);
 
-        VM.warp(evm.vestingPeriod());
+        vm.warp(evm.vestingPeriod());
 
         assertEq(address(mb).balance, deposit / 2);
         assertEq(evm.vesting(), deposit);
@@ -223,7 +218,7 @@ contract EvergreenVestingModuleTest is DSTest {
         assertEq(evm.toBeClaimed(), 0);
         assertEq(evm.vestedAndUnclaimed(), 0);
 
-        VM.warp(evm.vestingPeriod() + 1);
+        vm.warp(evm.vestingPeriod() + 1);
         evm.claimFromVest();
 
         assertEq(address(mb).balance, deposit);
