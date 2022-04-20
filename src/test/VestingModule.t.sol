@@ -19,6 +19,8 @@ contract VestingModuleTest is Test {
     MockBeneficiary mb;
     MockERC20 mERC20;
 
+    error CreateFail();
+
     event ReceiveETH(uint256 amount);
 
     event CreateVestingStream(
@@ -36,6 +38,43 @@ contract VestingModuleTest is Test {
 
         mERC20 = new MockERC20("Test Token", "TOK", 18);
         mERC20.mint(type(uint256).max);
+    }
+
+    function testCan_predictVestingModuleAddress(
+        address beneficiary,
+        uint256 vestingPeriod
+    ) public {
+        vm.assume(beneficiary != address(0));
+        vm.assume(vestingPeriod != 0);
+
+        (address predictedAddress, bool exists) = exampleVmf
+            .predictVestingModuleAddress(beneficiary, vestingPeriod);
+
+        assertTrue(!exists);
+
+        exampleVm = exampleVmf.createVestingModule(beneficiary, vestingPeriod);
+        assertEq(address(exampleVm), predictedAddress);
+
+        (predictedAddress, exists) = exampleVmf.predictVestingModuleAddress(
+            beneficiary,
+            vestingPeriod
+        );
+        assertEq(address(exampleVm), predictedAddress);
+        assertTrue(exists);
+    }
+
+    function testCannot_duplicateVestingModulesWithSameParams(
+                                                 address beneficiary,
+                                                 uint256 vestingPeriod
+                                                 ) public {
+        vm.assume(beneficiary != address(0));
+        vm.assume(vestingPeriod != 0);
+
+        exampleVm = exampleVmf.createVestingModule(beneficiary, vestingPeriod);
+
+        vm.expectRevert(CreateFail.selector);
+
+        exampleVm = exampleVmf.createVestingModule(beneficiary, vestingPeriod);
     }
 
     function testCan_receiveETH(uint96 deposit) public {
