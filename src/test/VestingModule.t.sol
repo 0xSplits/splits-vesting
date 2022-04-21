@@ -140,6 +140,11 @@ contract VestingModuleTest is Test {
         emit ReleaseFromVestingStream(id, deposit - deposit / 2);
 
         exampleVm.releaseFromVesting(ids);
+
+        vm.expectEmit(true, true, true, true);
+        emit ReleaseFromVestingStream(id, 0);
+
+        exampleVm.releaseFromVesting(ids);
     }
 
     function testCannot_releaseFromInvalidVestingStreamId(
