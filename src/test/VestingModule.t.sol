@@ -535,11 +535,11 @@ contract VestingModuleTest is Test {
         internal
     {
         vm.assume(deposit != 0);
+        uint256 fnStart = block.timestamp;
 
         address[] memory tokens = new address[](1);
         tokens[0] = token;
         uint256[] memory ids = exampleVm.createVestingStreams(tokens);
-        uint256 vestingStart = block.timestamp;
 
         assertEq(ids.length, tokens.length);
         assertEq(exampleVm.numVestingStreams(), 1);
@@ -552,52 +552,56 @@ contract VestingModuleTest is Test {
             exampleVm.vestingStream(id),
             VestingModule.VestingStream({
                 token: tokens[0],
-                vestingStart: vestingStart,
+                vestingStart: fnStart,
                 total: deposit,
                 released: 0
             })
         );
         assertEq(exampleVm.vested(id), 0);
 
-        vm.warp(exampleVm.vestingPeriod() / 2);
+        vm.warp(fnStart + exampleVm.vestingPeriod() / 2);
         assertEq(exampleVm.vesting(tokens[0]), deposit);
         assertEq(exampleVm.released(tokens[0]), 0);
         assertEq(
             exampleVm.vestingStream(id),
             VestingModule.VestingStream({
                 token: tokens[0],
-                vestingStart: vestingStart,
+                vestingStart: fnStart,
                 total: deposit,
                 released: 0
             })
         );
         assertEq(exampleVm.vested(id), deposit / 2);
 
-        vm.warp(exampleVm.vestingPeriod());
+        vm.warp(fnStart + exampleVm.vestingPeriod());
         assertEq(exampleVm.vesting(tokens[0]), deposit);
         assertEq(exampleVm.released(tokens[0]), 0);
         assertEq(
             exampleVm.vestingStream(id),
             VestingModule.VestingStream({
                 token: tokens[0],
-                vestingStart: vestingStart,
+                vestingStart: fnStart,
                 total: deposit,
                 released: 0
             })
         );
         assertEq(exampleVm.vested(id), deposit);
+
+        // make sure fn leaves timestamp unchanged
+        vm.warp(fnStart);
     }
 
     function testCan_releaseFromVesting(address token, uint256 deposit)
         internal
     {
+        uint256 fnStart = block.timestamp;
+
         address[] memory tokens = new address[](1);
         tokens[0] = token;
         uint256[] memory ids = exampleVm.createVestingStreams(tokens);
         uint256 id = ids[0];
-        uint256 vestingStart = block.timestamp;
 
-        vm.warp(exampleVm.vestingPeriod() / 2);
+        vm.warp(fnStart + exampleVm.vestingPeriod() / 2);
 
         assertEq(getBalance(address(mb), token), 0);
         assertEq(exampleVm.vesting(tokens[0]), deposit);
@@ -606,7 +610,7 @@ contract VestingModuleTest is Test {
             exampleVm.vestingStream(id),
             VestingModule.VestingStream({
                 token: tokens[0],
-                vestingStart: vestingStart,
+                vestingStart: fnStart,
                 total: deposit,
                 released: 0
             })
@@ -624,7 +628,7 @@ contract VestingModuleTest is Test {
             exampleVm.vestingStream(id),
             VestingModule.VestingStream({
                 token: tokens[0],
-                vestingStart: vestingStart,
+                vestingStart: fnStart,
                 total: deposit,
                 released: deposit / 2
             })
@@ -632,7 +636,7 @@ contract VestingModuleTest is Test {
         assertEq(exampleVm.vested(id), deposit / 2);
         assertEq(exampleVm.vestedAndUnreleased(id), 0);
 
-        vm.warp(exampleVm.vestingPeriod());
+        vm.warp(fnStart + exampleVm.vestingPeriod());
 
         assertEq(getBalance(address(mb), token), deposit / 2);
         assertEq(exampleVm.vesting(tokens[0]), deposit);
@@ -641,7 +645,7 @@ contract VestingModuleTest is Test {
             exampleVm.vestingStream(id),
             VestingModule.VestingStream({
                 token: tokens[0],
-                vestingStart: vestingStart,
+                vestingStart: fnStart,
                 total: deposit,
                 released: deposit / 2
             })
@@ -659,7 +663,7 @@ contract VestingModuleTest is Test {
             exampleVm.vestingStream(id),
             VestingModule.VestingStream({
                 token: tokens[0],
-                vestingStart: vestingStart,
+                vestingStart: fnStart,
                 total: deposit,
                 released: deposit
             })
@@ -677,7 +681,7 @@ contract VestingModuleTest is Test {
             exampleVm.vestingStream(id),
             VestingModule.VestingStream({
                 token: tokens[0],
-                vestingStart: vestingStart,
+                vestingStart: fnStart,
                 total: deposit,
                 released: deposit
             })
@@ -685,7 +689,7 @@ contract VestingModuleTest is Test {
         assertEq(exampleVm.vested(id), deposit);
         assertEq(exampleVm.vestedAndUnreleased(id), 0);
 
-        vm.warp(exampleVm.vestingPeriod() * 2);
+        vm.warp(fnStart + exampleVm.vestingPeriod() * 2);
         releasedFunds = exampleVm.releaseFromVesting(ids);
         assertEq(releasedFunds[0], 0);
 
@@ -696,13 +700,16 @@ contract VestingModuleTest is Test {
             exampleVm.vestingStream(id),
             VestingModule.VestingStream({
                 token: tokens[0],
-                vestingStart: vestingStart,
+                vestingStart: fnStart,
                 total: deposit,
                 released: deposit
             })
         );
         assertEq(exampleVm.vested(id), deposit);
         assertEq(exampleVm.vestedAndUnreleased(id), 0);
+
+        // make sure fn leaves timestamp unchanged
+        vm.warp(fnStart);
     }
 
     function getBalance(address target, address token)
