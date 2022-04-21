@@ -81,13 +81,15 @@ contract VestingModuleTest is Test {
         assertEq(address(exampleVm).balance, deposit);
     }
 
-    function testCan_createETHVestingStreams(uint96 deposit) public {
+    function testCan_createETHVestingStreams(uint128 startTimestamp, uint96 deposit) public {
         address(exampleVm).safeTransferETH(deposit);
+        vm.warp(startTimestamp);
         testCan_createVestingStream(address(0), deposit);
     }
 
-    function testCan_createERC20VestingStreams(uint256 deposit) public {
+    function testCan_createERC20VestingStreams(uint128 startTimestamp, uint256 deposit) public {
         ERC20(mERC20).safeTransfer(address(exampleVm), deposit);
+        vm.warp(startTimestamp);
         testCan_createVestingStream(address(mERC20), deposit);
     }
 
@@ -111,13 +113,15 @@ contract VestingModuleTest is Test {
         exampleVm.createVestingStreams(tokens);
     }
 
-    function testCan_releaseETHFromVesting(uint96 deposit) public {
+    function testCan_releaseETHFromVesting(uint128 startTimestamp, uint96 deposit) public {
         address(exampleVm).safeTransferETH(deposit);
+        vm.warp(startTimestamp);
         testCan_releaseFromVesting(address(0), deposit);
     }
 
-    function testCan_releaseERC20FromVesting(uint256 deposit) public {
+    function testCan_releaseERC20FromVesting(uint128 startTimestamp, uint256 deposit) public {
         ERC20(mERC20).safeTransfer(address(exampleVm), deposit);
+        vm.warp(startTimestamp);
         testCan_releaseFromVesting(address(mERC20), deposit);
     }
 
