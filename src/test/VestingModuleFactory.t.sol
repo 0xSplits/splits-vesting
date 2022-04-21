@@ -7,16 +7,18 @@ import {VestingModuleFactory} from "../VestingModuleFactory.sol";
 import {MockBeneficiary} from "./mocks/MockBeneficiary.sol";
 
 contract VestingModuleTest is Test {
-    VestingModuleFactory exampleVmf;
-    VestingModule exampleVm;
-
-    MockBeneficiary mb;
+    error CreateFail();
 
     event CreateVestingModule(
         address indexed vestingModule,
         address indexed beneficiary,
         uint256 vestingPeriod
     );
+
+    VestingModuleFactory exampleVmf;
+    VestingModule exampleVm;
+
+    MockBeneficiary mb;
 
     function setUp() public {
         mb = new MockBeneficiary();
@@ -59,5 +61,41 @@ contract VestingModuleTest is Test {
         vm.expectRevert(VestingModuleFactory.InvalidVestingPeriod.selector);
 
         exampleVm = exampleVmf.createVestingModule(beneficiary, 0);
+    }
+        function testCan_predictVestingModuleAddress(
+        address beneficiary,
+        uint256 vestingPeriod
+    ) public {
+        vm.assume(beneficiary != address(0));
+        vm.assume(vestingPeriod != 0);
+
+        (address predictedAddress, bool exists) = exampleVmf
+            .predictVestingModuleAddress(beneficiary, vestingPeriod);
+
+        assertTrue(!exists);
+
+        exampleVm = exampleVmf.createVestingModule(beneficiary, vestingPeriod);
+        assertEq(address(exampleVm), predictedAddress);
+
+        (predictedAddress, exists) = exampleVmf.predictVestingModuleAddress(
+            beneficiary,
+            vestingPeriod
+        );
+        assertEq(address(exampleVm), predictedAddress);
+        assertTrue(exists);
+    }
+
+    function testCannot_duplicateVestingModulesWithSameParams(
+                                                 address beneficiary,
+                                                 uint256 vestingPeriod
+                                                 ) public {
+        vm.assume(beneficiary != address(0));
+        vm.assume(vestingPeriod != 0);
+
+        exampleVm = exampleVmf.createVestingModule(beneficiary, vestingPeriod);
+
+        vm.expectRevert(CreateFail.selector);
+
+        exampleVm = exampleVmf.createVestingModule(beneficiary, vestingPeriod);
     }
 }
