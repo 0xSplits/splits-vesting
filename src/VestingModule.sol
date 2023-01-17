@@ -14,8 +14,8 @@ import {FullMath} from "./lib/FullMath.sol";
 /// a vesting period but may begin or have funds released independently.
 /// @dev Funds pile up in the contract via `receive()` & simple ERC20 `transfer`
 /// until a caller creates a new vesting stream. The funds then vest linearly
-/// over {vestingPeriod} and may be withdrawn accordingly by anyone on behalf
-/// of the {beneficiary}. There is no limit on the number of simultaneous
+/// over `vestingPeriod` and may be withdrawn accordingly by anyone on behalf
+/// of the `beneficiary`. There is no limit on the number of simultaneous
 /// vesting streams which may be created, ongoing or withdrawn from in a single
 /// tx.
 /// This contract uses address(0) in some fns/events/mappings to refer to ETH.
@@ -164,7 +164,7 @@ contract VestingModule is Clone {
 
     /// @notice Releases vested funds to the beneficiary
     /// @param ids Ids of vesting streams to release funds from
-    /// @return releasedFunds Amounts of funds released from vesting streams {ids}
+    /// @return releasedFunds Amounts of funds released from vesting streams `ids`
     function releaseFromVesting(uint256[] calldata ids)
         external
         payable
@@ -203,7 +203,7 @@ contract VestingModule is Clone {
     /// functions - views
     /// -----------------------------------------------------------------------
 
-    /// @notice View vesting stream {id}
+    /// @notice View vesting stream `id`
     /// @param id Id of vesting stream to view
     /// @return vs Vesting stream
     function vestingStream(uint256 id)
@@ -214,17 +214,17 @@ contract VestingModule is Clone {
         vs = vestingStreams[id];
     }
 
-    /// @notice View vested amount in vesting stream {id}
+    /// @notice View vested amount in vesting stream `id`
     /// @param id Id of vesting stream to get vested amount of
-    /// @return Amount vested in vesting stream {id}
+    /// @return Amount vested in vesting stream `id`
     function vested(uint256 id) external view returns (uint256) {
         VestingStream memory vs = vestingStreams[id];
         return _vested(vs);
     }
 
-    /// @notice View vested-and-unreleased amount in vesting stream {id}
+    /// @notice View vested-and-unreleased amount in vesting stream `id`
     /// @param id Id of vesting stream to get vested-and-unreleased amount of
-    /// @return Amount vested-and-unreleased in vesting stream {id}
+    /// @return Amount vested-and-unreleased in vesting stream `id`
     function vestedAndUnreleased(uint256 id) external view returns (uint256) {
         VestingStream memory vs = vestingStreams[id];
         return _vestedAndUnreleased(vs);
@@ -234,9 +234,9 @@ contract VestingModule is Clone {
     /// functions - private & internal
     /// -----------------------------------------------------------------------
 
-    /// @notice View vested amount in vesting stream {vs}
+    /// @notice View vested amount in vesting stream `vs`
     /// @param vs Vesting stream to get vested amount of
-    /// @return Amount vested in vesting stream {vs}
+    /// @return Amount vested in vesting stream `vs`
     function _vested(VestingStream memory vs) internal view returns (uint256) {
         uint256 elapsedTime;
         unchecked {
@@ -250,9 +250,9 @@ contract VestingModule is Clone {
                 : FullMath.mulDiv(vs.total, elapsedTime, vestingPeriod());
     }
 
-    /// @notice View vested-and-unreleased amount in vesting stream {vs}
+    /// @notice View vested-and-unreleased amount in vesting stream `vs`
     /// @param vs Vesting stream to get vested-and-unreleased amount of
-    /// @return Amount vested-and-unreleased in vesting stream {vs}
+    /// @return Amount vested-and-unreleased in vesting stream `vs`
     function _vestedAndUnreleased(VestingStream memory vs)
         internal
         view

@@ -48,3 +48,7 @@ via_ir = false
 [profile.default.rpc_storage_caching]
 chains = 'all'
 endpoints = 'all'
+
+[etherscan]
+gnosis = { key = "${GNO_ETHERSCAN_API_KEY}", url = "https://api.gnosisscan.io/api" }
+chiado = { key = "${GNO_ETHERSCAN_API_KEY}", url = "https://blockscout.com/gnosis/chiado/api" }
