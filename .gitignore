@@ -9,3 +9,8 @@ out/
 node_modules/
 
 types/
+
+# Ignores development broadcast logs
+!/broadcast
+/broadcast/*
+/broadcast/*/31337/
