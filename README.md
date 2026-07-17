@@ -2,7 +2,7 @@
 
 Vesting contracts for the [Splits protocol](https://splits.org/protocol/).
 
-[Docs](https://docs.0xsplits.xyz/modules/vesting)
+[Docs](https://splits.org/protocol/docs/core/vesting)
 
 Install [foundry](https://github.com/gakonst/foundry#installation), then run `forge install` and `make build` to compile the contracts. See package.json & makefile for the full list of commands/scripts
 
